@@ -19,9 +19,13 @@ export function usePopular() {
   return { products: data?.items || data || [], error, isLoading }
 }
 
-export function useSimilar(id?: string) {
-  const { data, error, isLoading } = useSWR(id ? ["/recs/similarity", id] : null, ([, pid]) => getSimilar(pid))
-  return { products: data?.items || data || [], error, isLoading }
+export function useSimilar() {
+  const { data, error, isLoading } = useSWR(
+    "/recommend",
+    () => getSimilar()
+  );
+
+  return { products: data?.recommendations || [], error, isLoading };
 }
 
 export function useMe() {

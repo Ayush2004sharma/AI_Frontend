@@ -90,9 +90,15 @@ export async function getPopular() {
   return apiFetch("/recs/popular")
 }
 
-export async function getSimilar(itemId: string) {
-  return apiFetch(`/recs/similarity/${itemId}`)
+export async function getSimilar() {
+  const token = localStorage.getItem("token"); // or from auth context
+  return apiFetch("/recommend", {
+    headers: {
+      Authorization: `Bearer ${token}`
+    }
+  });
 }
+
 
 // ------------------- EVENTS -------------------
 

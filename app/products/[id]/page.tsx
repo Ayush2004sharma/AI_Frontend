@@ -15,9 +15,9 @@ import { useRecentStore } from "@/context/recent-store"
 export default function ProductDetailsPage() {
   const params = useParams<{ id: string }>()
   const id = params.id
-  console.log("Product ID from params:", id) // 👈 log id here
+  console.log("Product ID from params:", id)
   const { product, isLoading } = useProduct(id)
-  const { products: similar } = useSimilar(id)
+  const { products: similar } = useSimilar()
   const { addItem } = useCartStore()
 
   useEffect(() => {
@@ -54,24 +54,35 @@ export default function ProductDetailsPage() {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
           <div className="relative aspect-square w-full overflow-hidden rounded-md bg-muted">
             {product.image ? (
-              <Image src={product.image || "/placeholder.svg"} alt={product.title} fill className="object-cover" />
+              <Image
+                src={product.image || "/placeholder.svg"}
+                alt={product.title || product.name}
+                fill
+                className="object-cover"
+              />
             ) : (
               <img
-                alt={product.title}
+                alt={product.title || product.name}
                 className="h-full w-full object-cover"
                 src="/product-image-placeholder-big.png"
               />
             )}
           </div>
           <div className="space-y-4">
-            <h1 className="text-2xl font-semibold">{product.title}</h1>
-            {product.description && <p className="text-muted-foreground">{product.description}</p>}
-            <p className="text-xl font-semibold">${product.price?.toFixed?.(2) ?? product.price}</p>
+            <h1 className="text-2xl font-semibold">{product.title || product.name}</h1>
+            {product.description && (
+              <p className="text-muted-foreground">{product.description}</p>
+            )}
+            <p className="text-xl font-semibold">
+              ${product.price?.toFixed?.(2) ?? product.price}
+            </p>
             <div className="flex gap-3">
               <Button onClick={() => addItem(product, 1)}>Add to cart</Button>
               <Button
                 variant="outline"
-                onClick={() => trackEvent({ type: "click", item_id: String(product.id) }).catch(() => null)}
+                onClick={() =>
+                  trackEvent({ type: "click", item_id: String(product.id || product._id) }).catch(() => null)
+                }
               >
                 Track Click
               </Button>

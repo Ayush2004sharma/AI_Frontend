@@ -2,22 +2,32 @@
 
 import { Navbar } from "@/components/navbar"
 import { Footer } from "@/components/footer"
-import { useMe, usePopular } from "@/services/hooks"
+import { useMe } from "@/services/hooks"
 import { usePurchases } from "@/services/hooks"
 import { PurchaseList } from "@/components/purchase-list"
 import { useRecentStore } from "@/context/recent-store"
-import { useSimilar } from "@/services/hooks"
+import { useProduct } from "@/services/hooks"
+import { ProductCard } from "@/components/product-card"
 
 export default function DashboardPage() {
   const { user, isLoading } = useMe()
-  console.log("User data:", user)
   const { purchases, isLoading: loadingPurchases } = usePurchases()
-  const { products: popular } = usePopular()
-
-  // personalized recommendations based on most recent view
   const { recentProductIds } = useRecentStore()
-  const mostRecentId = recentProductIds[0]
-  const { products: recs } = useSimilar(mostRecentId)
+
+  // Filter out invalid IDs
+const validRecentIds = recentProductIds.filter(id => id && id !== "undefined");
+
+
+  // Fetch products with useProduct hook correctly
+  const productsData = validRecentIds.map((id) => useProduct(id))
+
+  const products = productsData.map((p) => p.product).filter(Boolean)
+  const loadingRecent = productsData.some((p) => p.isLoading)
+  const errorRecent = productsData.find((p) => p.error)?.error
+
+  const mostRecentId = validRecentIds[0]
+  console.log("🆕 Fetched recent products data:", products)
+  console.log("🆕 Recent IDs:", recentProductIds)
 
   return (
     <div className="min-h-screen flex flex-col">
@@ -47,12 +57,23 @@ export default function DashboardPage() {
 
         <section className="space-y-3">
           <h2 className="text-lg font-semibold">Recommended for you</h2>
-          {/* If we have a recent product, show similar; else show popular */}
-          {/* Reuse the existing ProductGrid on a future pass if needed */}
           <div className="text-sm text-muted-foreground">
             {mostRecentId ? "Based on your recent views." : "Popular picks for you."}
           </div>
-          {/* Keep this simple; Home already shows grids. You can add a grid here similarly if desired. */}
+
+          {loadingRecent ? (
+            <p className="text-sm text-muted-foreground">Loading recommendations...</p>
+          ) : errorRecent ? (
+            <p className="text-sm text-red-500">Failed to load recommendations.</p>
+          ) : products.length > 0 ? (
+            <div className="grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-4">
+              {products.map((p) => (
+                 <ProductCard key={p.name + p.created_at} product={p} />
+              ))}
+            </div>
+          ) : (
+            <p className="text-sm text-muted-foreground">No recommendations available.</p>
+          )}
         </section>
       </main>
       <Footer />
