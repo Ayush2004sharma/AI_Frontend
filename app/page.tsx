@@ -9,13 +9,14 @@ import Link from "next/link";
 import { useMe } from "@/services/hooks";
 import { useSimilar } from "@/services/hooks";
 import { useRecentStore } from "@/context/recent-store";
+import { RecommendSection } from "@/components/recommend";
 
 export default function HomePage() {
   const { products: popular, isLoading: loadingPopular } = usePopular();
   const { user } = useMe();
   const { recentProductIds } = useRecentStore();
   const mostRecentId = recentProductIds[0];
-  const { products: recs, isLoading: loadingRecs } = useSimilar(mostRecentId);
+  const { products: recs, isLoading: loadingRecs } = useSimilar();
 
   return (
     <div className="flex min-h-dvh flex-col">
@@ -88,19 +89,10 @@ export default function HomePage() {
 
         {user && mostRecentId && (
           <section className="space-y-4">
-            <div className="flex items-center justify-between">
-              <h2 className="text-xl font-semibold">Recommended for you</h2>
-              <Link href="/products" className="text-sm hover:underline">
-                Explore more
-              </Link>
-            </div>
-            {loadingRecs ? (
-              <p className="text-sm text-muted-foreground">
-                Loading recommendations...
-              </p>
-            ) : (
-              <ProductGrid products={recs} />
-            )}
+            
+                 {/* ✅ Extracted Recommend Section */}
+                     <RecommendSection recentProductIds={recentProductIds} />
+                    
           </section>
         )}
       </main>
