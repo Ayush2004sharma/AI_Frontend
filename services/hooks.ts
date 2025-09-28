@@ -34,8 +34,6 @@ export function useMe() {
       ? localStorage.getItem("buybixx_token")
       : null
 
-  console.log("🔑 useMe token:", token) // 👈 log token here
-
   const { data, error, isLoading, mutate } = useSWR(
     token ? ["/auth/me", token] : null,
     () => me()

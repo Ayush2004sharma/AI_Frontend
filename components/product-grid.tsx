@@ -1,6 +1,6 @@
 import { ProductCard, type Product } from "./product-card"
 export function ProductGrid({ products }: { products: Product[] }) {
-  console.log("Rendering ProductGrid with products:", products)
+
   if (!products?.length) {
     return <p className="text-sm text-muted-foreground">No products found.</p>
   }

@@ -16,7 +16,7 @@ export default function HomePage() {
   const { user } = useMe();
   const { recentProductIds } = useRecentStore();
   const mostRecentId = recentProductIds[0];
-  const { products: recs, isLoading: loadingRecs } = useSimilar();
+
 
   return (
     <div className="flex min-h-dvh flex-col">
