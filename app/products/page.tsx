@@ -14,18 +14,16 @@ const categoriesMock = ["electronics", "fashion", "home", "sports", "beauty"]
 
 export default function ProductsPage() {
   const sp = useSearchParams()
+
+  // Stabilize params object
   const params = useMemo(() => {
-    const q = sp.get("q") || ""
-    const category = sp.get("category") || ""
-    const min = sp.get("min") || ""
-    const max = sp.get("max") || ""
-    const page = sp.get("page") || "1"
-    const p: Record<string, any> = {}
-    if (q) p.q = q
-    if (category) p.category = category
-    if (min) p.min = min
-    if (max) p.max = max
-    if (page) p.page = page
+    const p: Record<string, any> = {
+      q: sp.get("q") || "",
+      category: sp.get("category") || "all",
+      min: sp.get("min") || "0",
+      max: sp.get("max") || "1000",
+      page: sp.get("page") || "1",
+    }
     return p
   }, [sp])
 

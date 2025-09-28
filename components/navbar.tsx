@@ -1,7 +1,6 @@
 "use client"
 
 import type React from "react"
-
 import Link from "next/link"
 import { usePathname, useRouter } from "next/navigation"
 import { ShoppingCart, User, LogIn } from "lucide-react"
@@ -20,11 +19,29 @@ export function Navbar() {
   const { user, token, logout } = useAuthStore()
   const [q, setQ] = useState("")
 
-  const onSearch = (e: React.FormEvent) => {
-    e.preventDefault()
-    const query = q.trim()
-    router.push(query ? `/products?q=${encodeURIComponent(query)}` : "/products")
+ const categories = ["electronics", "fashion", "home", "sports", "beauty"] // your valid categories
+
+const onSearch = (e: React.FormEvent) => {
+  e.preventDefault()
+  const query = q.trim()
+  if (!query) return
+
+  const searchParams = new URLSearchParams()
+  
+  // Always set the search query for product names
+  searchParams.set("q", query)
+
+  // If query matches a known category, also apply category filter
+  const matchedCategory = categories.find(
+    (c) => c.toLowerCase() === query.toLowerCase()
+  )
+  if (matchedCategory) {
+    searchParams.set("category", matchedCategory)
   }
+
+  router.push(`/products?${searchParams.toString()}`)
+}
+
 
   const count = items.reduce((sum, i) => sum + i.quantity, 0)
 

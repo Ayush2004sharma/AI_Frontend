@@ -3,10 +3,24 @@
 import useSWR from "swr"
 import { getProduct, getProducts, getPopular, getSimilar, me, getPurchaseHistory } from "./api"
 
-export function useProducts(params: Record<string, any>) {
-  const key = ["/products", params] as const
+export function useProducts(params: Record<string, any> = {}) {
+  // Filter out undefined or null only (allow empty strings, zeros, etc.)
+  const cleanParams: Record<string, string | number | boolean> = {}
+  for (const [k, v] of Object.entries(params)) {
+    if (v === undefined || v === null) continue
+    cleanParams[k] = v
+  }
+
+  const key = ["/products", cleanParams] as const
   const { data, error, isLoading, mutate } = useSWR(key, ([, p]) => getProducts(p))
-  return { products: data?.items || data || [], error, isLoading, mutate, raw: data }
+
+  return {
+    products: data?.items || data || [],
+    error,
+    isLoading,
+    mutate,
+    raw: data,
+  }
 }
 
 export function useProduct(id?: string) {
