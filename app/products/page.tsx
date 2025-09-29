@@ -17,15 +17,26 @@ export default function ProductsPage() {
 
   // Stabilize params object
   const params = useMemo(() => {
-    const p: Record<string, any> = {
-      q: sp.get("q") || "",
-      category: sp.get("category") || "all",
-      min: sp.get("min") || "0",
-      max: sp.get("max") || "1000",
-      page: sp.get("page") || "1",
-    }
-    return p
-  }, [sp])
+  const p: Record<string, any> = {}
+
+  const q = sp.get("q")
+  if (q) p.q = q
+
+  const category = sp.get("category")
+  if (category && category !== "all") p.category = category
+
+  const min = sp.get("min")
+  if (min) p.min = min
+
+  const max = sp.get("max")
+  if (max) p.max = max
+
+  const page = sp.get("page")
+  if (page) p.page = page
+
+  return p
+}, [sp])
+
 
   const { products, isLoading } = useProducts(params)
 

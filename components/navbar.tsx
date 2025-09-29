@@ -27,17 +27,20 @@ const onSearch = (e: React.FormEvent) => {
   if (!query) return
 
   const searchParams = new URLSearchParams()
-  
-  // Always set the search query for product names
-  searchParams.set("q", query)
 
-  // If query matches a known category, also apply category filter
+  // Check if query matches a category
   const matchedCategory = categories.find(
     (c) => c.toLowerCase() === query.toLowerCase()
   )
-  if (matchedCategory) {
-    searchParams.set("category", matchedCategory)
-  }
+
+if (matchedCategory) {
+  searchParams.set("category", matchedCategory)
+} else if (query) {
+  searchParams.set("q", query)
+}
+
+  // Reset to first page when searching
+  searchParams.set("page", "1")
 
   router.push(`/products?${searchParams.toString()}`)
 }

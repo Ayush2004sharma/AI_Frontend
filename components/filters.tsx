@@ -21,13 +21,14 @@ export function Filters({ categories }: { categories: string[] }) {
     setMax(Number(sp.get("max") ?? 1000))
   }, [sp])
 
-  const apply = () => {
-    const params = new URLSearchParams()
-    if (cat) params.set("category", cat)
-    params.set("min", String(min))
-    params.set("max", String(max))
-    router.push(`/products?${params.toString()}`)
-  }
+const apply = () => {
+  const params = new URLSearchParams()
+  if (cat && cat !== "all") params.set("category", cat)
+  if (min !== 0) params.set("min", String(min))
+  if (max !== 1000) params.set("max", String(max))
+  router.push(`/products?${params.toString()}`)
+}
+
 
   const clear = () => {
     setCat("all")
